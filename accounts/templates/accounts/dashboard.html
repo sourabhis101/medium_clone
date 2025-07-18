@@ -1,0 +1,38 @@
+{% extends "pages/base.html" %}
+{% block content %}
+<div class="container">
+  <h2 style="margin-left: 10px;">Welcome To Your Dashboard</h2>
+
+  
+  <div class="card border-dark mb-3" style="width: 25rem ; margin-top: 15px;">
+  
+  <div class="card-body text-dark">
+    <h5 class="card-title">Your Profile</h5>
+    <p class="card-text">
+      <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>Bio:</strong> {{ user.bio|default:"No bio yet." }}</p>
+    <p><strong>Followers:</strong> {{ followers.count }}</p>
+    <p><strong>Following:</strong> {{ following.count }}</p>
+    
+    </p>
+     {% if user in following_users %}
+        <a href="{% url 'unfollow_user' user.id %}" class="btn btn-sm btn-danger" style="width: 10rem;">Unfollow</a>
+    {% else %}
+        <a href="{% url 'follow_user' user.id %}" class="btn btn-sm btn-success" style="width: 10rem;" >Follow</a>
+    {% endif %}
+  </div>
+  
+</div>
+
+  <h3 class="mt-4">Your Posts</h3>
+  {% for post in posts %}
+    <div class="border-bottom py-2">
+      <a href="{% url 'post_detail' post.slug %}">{{ post.title }}</a>
+    </div>
+  {% empty %}
+    <p>You haven't written any posts yet.</p>
+  {% endfor %}
+
+  <a href="{% url 'create_post' %}" class="btn btn-success mt-3">+ New Post</a>
+</div>
+{% endblock %}

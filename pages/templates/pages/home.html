@@ -1,0 +1,21 @@
+{% extends 'pages/base.html' %}
+{% block title %}Medium_clone{% endblock %}
+{% block content %}
+  <h1>All Articles</h1>
+
+  {% if posts %}
+    <div class="list-group">
+      {% for post in posts %}
+        <a href="{% url 'blog:post_detail' slug=post.slug %}" class="list-group-item list-group-item-action">
+          <h5>{{ post.title }}</h5>
+          <small>By {{ post.author }} on {{ post.created|date:"F j, Y" }}</small>
+          <p class="mt-1">{{ post.content|truncatewords:20 }}</p>
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>No posts yet.</p>
+  {% endif %}
+
+{% endblock %}
+

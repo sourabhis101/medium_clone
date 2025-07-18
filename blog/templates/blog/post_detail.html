@@ -1,0 +1,48 @@
+{% extends "pages/base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ post.title }}</h2>
+    <p class="text-muted">By {{ post.author }} | {{ post.created_at|date:"M d, Y" }}</p>
+
+    <div id="post-content" class="my-4"></div>
+
+    <form method="post" action="{% url 'toggle_like' post.slug %}">
+        {% csrf_token %}
+        <button class="btn btn-outline-{{ 'danger' if liked else 'primary' }}">
+            {% if liked %}❤️ Unlike{% else %}🤍 Like{% endif %}
+        </button>
+        <span class="ms-2">{{ post.likes.count }} likes</span>
+    </form>
+
+    <hr>
+    <h5>💬 Comments</h5>
+    {% for comment in comments %}
+        <div class="border-bottom py-2">
+            <strong>{{ comment.author }}</strong>: {{ comment.text }}
+        </div>
+    {% empty %}
+        <p>No comments yet.</p>
+    {% endfor %}
+
+    {% if user.is_authenticated %}
+        <form method="post" action="{% url 'add_comment' post.slug %}" class="mt-3">
+            {% csrf_token %}
+            <textarea name="text" class="form-control" placeholder="Write a comment..." rows="3"></textarea>
+            <button type="submit" class="btn btn-primary mt-2">Comment</button>
+        </form>
+    {% endif %}
+</div>
+
+<!-- Render Editor.js content -->
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
+{{ post.content|json_script:"post-content-json" }}
+<script>
+    const data = JSON.parse(document.getElementById("post-content-json").textContent);
+
+    const editor = new EditorJS({
+        holder: 'post-content',
+        readOnly: true,
+        data: data,
+    });
+</script>
+{% endblock %}

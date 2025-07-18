@@ -1,0 +1,139 @@
+{% extends "pages/base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h2>Create New Post</h2>
+
+  <form method="post" onsubmit="return saveEditorContent();" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label class="form-label">Title</label>
+      <input type="text" name="title" class="form-control" required>
+    </div>
+
+    <div id="editorjs" class="border rounded p-3" style="min-height: 300px; text-align: left;"></div>
+    <input type="hidden" name="content" id="content-input">
+
+    <button type="submit" class="btn btn-success mt-3">Publish</button>
+  </form>
+</div>
+
+<!-- ✅ Editor.js and Tools CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/list@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/quote@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/image@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/code@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/table@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/checklist@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/delimiter@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/marker@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/warning@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/inline-code@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/underline@latest"></script>
+
+<!-- ✅ EditorJS Initialization -->
+<script>
+  const editor = new EditorJS({
+    holder: 'editorjs',
+    placeholder: 'Write your awesome story...',
+    tools: {
+      header: Header,
+      
+      quote: Quote,
+      List: {
+      class: EditorjsList,
+      inlineToolbar: true,
+      config: {
+        defaultStyle: 'unordered'
+      },
+    },
+      image: {
+        class: ImageTool,
+        config: {
+          endpoints: {
+            byFile: '/upload/image/',  // You must create this view
+          },
+          additionalRequestHeaders: {
+            'X-CSRFToken': '{{ csrf_token }}'
+          },
+          captionPlaceholder: 'Image caption',
+          inlineToolbar: true,
+          actions: [
+            {
+              name: 'stretch',
+              icon: '<svg>...</svg>',
+              title: 'Stretch',
+              toggle: true
+            }
+          ]
+        }
+      },
+      code: CodeTool,
+      table: Table,
+      checklist: Checklist,
+      embed: Embed,
+      delimiter: Delimiter,
+      marker: Marker,
+      warning: Warning,
+      inlineCode: InlineCode,
+      underline: Underline
+    },
+    onChange: () => {
+      addDeleteButtonsToImages();
+    },
+    onReady: () => {
+      addDeleteButtonsToImages();
+    }
+
+  });
+
+  function addDeleteButtonsToImages() {
+    const imageWrappers = document.querySelectorAll('.ce-block--type-image');
+
+    imageWrappers.forEach(wrapper => {
+      if (wrapper.querySelector('.delete-image-btn')) return; // Already added
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.textContent = '❌ Delete';
+      deleteBtn.className = 'delete-image-btn btn btn-sm btn-danger mt-2';
+
+      deleteBtn.onclick = () => {
+        const imageTag = wrapper.querySelector('img');
+        if (!imageTag) return;
+
+        const imageUrl = imageTag.src;
+        fetch('/delete/image/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+          },
+          body: JSON.stringify({ url: imageUrl })
+        }).then(res => {
+          if (res.ok) {
+            editor.blocks.delete(wrapper.dataset.id);
+          } else {
+            alert("Couldn't delete image");
+          }
+        });
+      };
+
+      wrapper.appendChild(deleteBtn);
+    });
+  }
+
+
+  async function saveEditorContent() {
+    try {
+      const output = await editor.save();
+      document.getElementById('content-input').value = JSON.stringify(output);
+      return true;
+    } catch (e) {
+      alert("Error saving content: " + e.message);
+      return false;
+    }
+  }
+</script>
+{% endblock %}

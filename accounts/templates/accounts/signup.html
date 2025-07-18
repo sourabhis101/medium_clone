@@ -1,0 +1,62 @@
+{% extends "pages/base.html" %}
+{% block title %}Sign Up - medium_clone{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 90vh;">
+  <div class="w-100" style="max-width: 500px;">
+    <div class="text-center mb-4">
+      {% if form.errors %}
+  <div class="alert alert-danger">{{ form.errors }}</div>
+{% endif %}
+
+      <h2 class="fw-bold text-dark">Medium_clone</h2>
+      <p class="text-muted">Create your account</p>
+    </div>
+
+    <form method="POST" class="bg-white p-4 shadow-sm rounded">
+      {% csrf_token %}
+      
+      <!-- Email Field -->
+      <div class="mb-4">
+        <label for="id_email" class="form-label fs-6 fw-semibold">Email address <span class="text-danger">*</span></label>
+        <input type="email" name="email" class="form-control form-control-lg rounded-3" id="id_email"
+               placeholder="Enter your email" required>
+        {% if form.email.errors %}
+          <div class="text-danger small mt-1">{{ form.email.errors|striptags }}</div>
+        {% endif %}
+      </div>
+
+      <!-- Password1 Field -->
+      <div class="mb-4">
+        <label for="id_password1" class="form-label fs-6 fw-semibold">Password <span class="text-danger">*</span></label>
+        <input type="password" name="password1" class="form-control form-control-lg rounded-3" id="id_password1"
+               placeholder="Create a password" required>
+        {% if form.password1.errors %}
+          <div class="text-danger small mt-1">{{ form.password1.errors|striptags }}</div>
+        {% endif %}
+      </div>
+
+      <!-- Password2 Field -->
+      <div class="mb-4">
+        <label for="id_password2" class="form-label fs-6 fw-semibold">Confirm Password <span class="text-danger">*</span></label>
+        <input type="password" name="password2" class="form-control form-control-lg rounded-3" id="id_password2"
+               placeholder="Repeat your password" required>
+        {% if form.password2.errors %}
+          <div class="text-danger small mt-1">{{ form.password2.errors|striptags }}</div>
+        {% endif %}
+      </div>
+
+      <!-- Submit Button -->
+      <div class="d-grid">
+        <button type="submit" class="btn btn-primary btn-lg rounded-pill">Get Started</button>
+      </div>
+
+      <!-- Already have an account -->
+      <div class="text-center mt-4">
+        <small class="text-muted">Already have an account?</small>
+        <a href="{% url 'login' %}" class="ms-1 text-decoration-none">Sign In</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "pages/base.html" %}
+
+{% block title %}All Posts{% endblock %}
+
+{% block content %}
+  <h1>All Blog Posts</h1>
+  {% for post in posts %}
+    <div>
+      <h2><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h2>
+      <p>{{ post.body|truncatewords:30 }}</p>
+    </div>
+  {% empty %}
+    <p>No posts found.</p>
+  {% endfor %}
+{% endblock %}
