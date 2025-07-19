@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-
+import sys
 from pathlib import Path
 from decouple import config
 import os
@@ -193,3 +193,15 @@ SECURE_HSTS_PRELOAD = True
 X_FRAME_OPTIONS = 'DENY'  # Prevent clickjacking
 SECURE_BROWSER_XSS_FILTER = True  # Enable XSS filter in browser
 SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevent content type sniffing
+import psycopg2
+try:
+    conn = psycopg2.connect(
+        dbname=config('DB_NAME'),
+        user=config('DB_USER'),
+        password=config('DB_PASSWORD'),
+        host=config('DB_HOST'),
+        port=config('DB_PORT')
+    )
+    print("✅ DB connection successful", file=sys.stderr)
+except Exception as e:
+    print("❌ DB connection failed:", e, file=sys.stderr)
