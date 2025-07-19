@@ -19,6 +19,7 @@ from django.urls import path , include
 from accounts.views import dashboard_view
 from django.conf import settings
 from django.conf.urls.static import static
+from django.http import HttpResponse
 
 # Error handlers
 handler400 = 'pages.views.custom_400_view'
@@ -26,8 +27,11 @@ handler403 = 'pages.views.custom_403_view'
 handler404 = 'pages.views.custom_404_view'
 handler500 = 'pages.views.custom_500_view'
 
+def test_home(request):
+    return HttpResponse("✅ It works!")
 
 urlpatterns = [
+    path('', test_home),
     path('admin/', admin.site.urls),
          # ✅ auth   
     path('accounts/', include('accounts.urls')),  
