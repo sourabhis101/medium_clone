@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.core.exceptions import PermissionDenied
 
 from django.core.exceptions import SuspiciousOperation
+from blog.models import Post
 
 def trigger_400(request):
     raise SuspiciousOperation("Bad request triggered for testing")
@@ -15,6 +16,7 @@ def trigger_403(request):
     raise PermissionDenied
 
 def home(request):
+    posts = Post.objects.all().order_by('-created_at')[:10]
     return render(request, 'pages/home.html')
 
 def contact(request):
