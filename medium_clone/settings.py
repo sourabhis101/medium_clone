@@ -182,6 +182,14 @@ ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'dashboard'
 
-SECURE_SSL_REDIRECT = True
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
+
+
+SECURE_SSL_REDIRECT = True  # Redirect HTTP to HTTPS
+SESSION_COOKIE_SECURE = True  # Secure cookies over HTTPS
+CSRF_COOKIE_SECURE = True     # Secure CSRF cookies
+SECURE_HSTS_SECONDS = 31536000  # Enable HTTP Strict Transport Security
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+X_FRAME_OPTIONS = 'DENY'  # Prevent clickjacking
+SECURE_BROWSER_XSS_FILTER = True  # Enable XSS filter in browser
+SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevent content type sniffing
