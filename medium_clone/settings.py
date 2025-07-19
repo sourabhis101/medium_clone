@@ -23,11 +23,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
-SECRET_KEY = config('SECRET_KEY')
+
+SECRET_KEY = os.environ.get('SECRET_KEY', 'fallback-key-for-dev')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-DEBUG = config('DEBUG', cast=bool)
+DEBUG = False
 
 ALLOWED_HOSTS = ['.onrender.com']
 
@@ -181,3 +182,6 @@ ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'dashboard'
 
+SECURE_SSL_REDIRECT = True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
