@@ -4,7 +4,7 @@
   <h2 style="margin-left: 10px;">Welcome To Your Dashboard</h2>
 
   
-  <div class="card border-dark mb-3" style="width: 25rem ; margin-top: 15px;">
+  <div class="card border-dark mb-3" style="width: 18rem ; margin-top: 15px;">
   
   <div class="card-body text-dark">
     <h5 class="card-title">Your Profile</h5>
@@ -28,6 +28,8 @@
   {% for post in posts %}
     <div class="border-bottom py-2">
       <a href="{% url 'post_detail' post.slug %}">{{ post.title }}</a>
+      {{ post.image }}
+      <p class="mt-1">{{ post.content|truncatewords:20 }}</p>
     </div>
   {% empty %}
     <p>You haven't written any posts yet.</p>
