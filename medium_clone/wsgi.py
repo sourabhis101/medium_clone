@@ -7,10 +7,16 @@ For more information on this file, see
 https://docs.djangoproject.com/en/5.2/howto/deployment/wsgi/
 """
 
-import os
+
+
+import sys
+
+print("==> Starting WSGI...", file=sys.stderr)
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'medium_clone.settings')
-
-application = get_wsgi_application()
+try:
+    application = get_wsgi_application()
+except Exception as e:
+    print("WSGI error:", str(e), file=sys.stderr)
+    raise
