@@ -1,0 +1,97 @@
+
+{% extends 'pages/base.html' %}
+
+{% block title %}Medium_clone - Login{% endblock %}
+
+{% block content %}
+<style>
+   .container-fluid {
+      margin-top: 20px;
+      margin-bottom: 20px;
+      place-items: center;
+      width: 100%;
+
+    }
+   
+   
+    .form-container {
+      text-align: center;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 2px 2px 2px 2px #504f4f;
+      max-width: 350px;
+      width: 100%;
+    }
+    .form-control {
+      border-radius: 12px;
+      box-shadow: 2px 2px 0px #000;
+      margin-bottom: 15px;
+    }
+    
+    .forgot-password {
+      display: block;
+      text-align: right;
+      margin-top: -10px;
+      margin-bottom: 15px;
+      font-size: 0.9rem;
+    }
+    .form-check-label{
+      display: block;
+      text-align: left;
+      margin-top: -10px;
+      margin-bottom: 15px;
+      font-size: 0.9rem;
+    }
+    .form-container button {
+    background-color: #003cff;
+    color: white;
+    border: none;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 25px;
+    cursor: pointer;
+    width: 100%;
+    
+  }
+</style>
+
+<div class="container-fluid">
+<div class="form-container">
+  <h2><strong>Medium_clone</strong></h2>
+  <p class="mb-4">Sign in to continue writing.</p>
+
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-danger">{{ message }}</div>
+  {% endfor %}
+{% endif %}
+
+  <form method="post">
+
+    {% csrf_token %}
+
+
+    <div class="form-floating"><input type="username" class="form-control" id="1"  placeholder="Username" name="username"  required>
+    <label for="1">Username</label></div>
+    <div class="form-floating"><input type="password" class="form-control"  id="2" placeholder="Password" name="password" required>
+    <label for="2">Password</label></div>
+    
+    
+    
+    <a href="/accounts/forget-password" class="forgot-password">Forgot password?</a>
+    
+    <div class="form-check form-switch">
+  <input class="form-check-input" type="checkbox" role="switch" id="switchCheckChecked" checked>
+  <label class="form-check-label" for="switchCheckChecked">Remember me</label>
+</div>
+
+
+    <p class="mt-2">Don't have an account? <a href="/accounts/signup">Sign up</a></p>
+
+    <button type="submit" >Login</button>
+  </form>
+</div>
+</div>
+
+
+{% endblock %}

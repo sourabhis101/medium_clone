@@ -1,0 +1,95 @@
+{% extends "pages/base.html" %}
+{% block title %}Create Post{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Create a New Post</h2>
+  <form method="post" enctype="multipart/form-data" id="postForm">
+    {% csrf_token %}
+
+    {% if form.errors %}
+<div class="alert alert-danger">
+  <ul>
+    {% for field in form %}
+      {% for error in field.errors %}
+        <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+      {% endfor %}
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+    <div class="mb-3">
+      {{ form.title.label_tag }}
+      {{ form.title }}
+    </div>
+
+    <div class="mb-3">
+      {{ form.featured_image.label_tag }}
+      {{ form.featured_image }}
+    </div>
+
+    <div class="mb-3">
+      {{ form.published.label_tag }}
+      {{ form.published }}
+    </div>
+
+    <!-- Editor.js container -->
+    <div id="editorjs" class="border p-2 rounded"></div>
+    <!-- Hidden input for Editor.js content -->
+    <input type="hidden" name="content" id="content">
+
+    
+    <button type="submit" class="btn btn-primary mt-3" id="publishBtn">Publish</button>
+    
+  </form>
+</div>
+
+<!-- Load Editor.js and tools -->
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/list@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/image@latest"></script>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const editor = new EditorJS({
+      holder: "editorjs",
+      tools: {
+        header: { class: Header, inlineToolbar: ["link"] },
+        list: {
+          class: EditorjsList,
+          inlineToolbar: true,
+          config: { defaultStyle: "unordered" }
+        },
+        image: {
+          class: ImageTool,
+          config: { endpoints: { byFile: "/upload_image/" } }
+        }
+      }
+    });
+
+    const publishBtn = document.getElementById("publishBtn");
+
+    publishBtn.addEventListener("click", function (e) {
+      e.preventDefault(); // prevent default form submit
+
+      editor.save().then((outputData) => {
+        document.getElementById("content").value = JSON.stringify(outputData);
+        document.getElementById("postForm").submit(); // manually submit form
+      }).catch((error) => {
+        console.error("❌ Saving failed:", error);
+        alert("Saving failed. Please fix your content.");
+      });
+    });
+  });
+</script>
+
+
+<noscript>
+  <div class="alert alert-danger">
+    JavaScript is required to create posts. Please enable JavaScript.
+  </div>
+</noscript>
+{% endblock %}

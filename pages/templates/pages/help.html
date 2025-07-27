@@ -1,0 +1,18 @@
+{% extends "pages/base.html" %}
+{% block title %}Help Center{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2>Help & Support</h2>
+  <p>Need assistance using Medium Clone? You're in the right place.</p>
+
+  <h5>Common Questions</h5>
+  <ul>
+    <li><strong>How do I write a post?</strong> - After logging in, click “Write New Post” in your profile.</li>
+    <li><strong>Can I edit my profile?</strong> - Yes, go to your profile and click “Edit Profile”.</li>
+    <li><strong>I forgot my password!</strong> - Use the “Forgot password?” link on the login page.</li>
+  </ul>
+
+  <p>Still need help? <a href="{% url 'contact' %}">Contact us</a>.</p>
+</div>
+{% endblock %}

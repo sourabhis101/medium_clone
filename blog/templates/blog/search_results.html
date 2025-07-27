@@ -1,0 +1,19 @@
+<!-- templates/blog/search_results.html -->
+
+{% extends "pages/base.html" %}
+{% block title %}Search Results{% endblock %}
+
+{% block content %}
+  <h3>Search results for "{{ query }}"</h3>
+
+  {% if results %}
+    {% for post in results %}
+      <div class="mb-3">
+        <h5><a href="{% url 'post_detail' username=post.author.username slug=post.slug %}">{{ post.title }}</a></h5>
+        <p class="text-muted">{{ post.created|date:"M d, Y" }}</p>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p>No results found.</p>
+  {% endif %}
+{% endblock %}

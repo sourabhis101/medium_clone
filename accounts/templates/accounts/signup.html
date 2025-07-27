@@ -1,0 +1,140 @@
+{% extends 'pages/base.html' %}
+
+{% block title %}Medium_clone - Signup{% endblock %}
+
+{% block content %}
+<style>
+  .container-fluid {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    place-items: center;
+    width: 100%;
+
+  }
+
+  .form-container {
+
+    text-align: center;
+   
+    padding: 20px;
+    border-radius: 12px;
+    max-width: 350px;
+    width: 100%;
+
+  }
+
+  .form-control {
+
+    border-radius: 12px;
+    box-shadow: 2px 2px 0px #000;
+    margin-bottom: 10px;
+  }
+
+  .form-container button {
+    background-color: #003cff;
+    color: white;
+    border: none;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 25px;
+    cursor: pointer;
+    width: 100%;
+
+  }
+</style>
+
+<div class="container">
+  <div class="row">
+    <div class="col-sm-6">
+      <!-- Content for Column 1 -->
+
+      <div class="container-fluid">
+        <div class="form-container">
+          <h2><strong>Medium_clone</strong></h2>
+          <p class="mb-4">Sign up to write stories.</p>
+
+          {% if messages %}
+          {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+          {% endfor %}
+          {% endif %}
+
+
+
+          <form method="post">
+            {% csrf_token %}
+
+            {% if form.errors %}
+            <div style="color: red; text-align: left; font-size: 14px;">
+              <ul>
+                {% for field in form %}
+                {% for error in field.errors %}
+                <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+            {% endif %}
+
+
+            <div class="form-floating"> <input type="text" class="form-control" id="2" placeholder="Username"
+                name="username" required>
+              <label for="2">Username</label>
+            </div>
+            <div class="form-floating"> <input type="email" class="form-control" id="3" placeholder="Email" name="email"
+                required>
+              <label for="3">Email</label>
+            </div>
+            <div class="form-floating"> <input type="password" class="form-control" id="4" placeholder="Password"
+                name="password1" required>
+              <label for="4">Password</label>
+            </div>
+            <div class="form-floating"> <input type="password" class="form-control" id="5"
+                placeholder="Confirm Password" name="password2" required>
+              <label for="5">Confirm Password</label>
+            </div>
+
+            <p class="mt-2">Already have an account? <a href="/accounts/login">Sign in</a></p>
+
+            <button type="submit">Sign Up</button>
+          </form>
+          <div style="margin-top: 15px;">  </div>
+          <p>By signing up, you agree to Medium_clone’s Terms of Service and Privacy Policy.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <!-- Content for Column 2 -->
+      <div style="margin-top: 40px;">
+
+  </div>
+  <h4>
+    Unleash the extraordinary within. Start writing your next masterpiece today!
+  </h4>
+     <div class="image-container position-relative text-white">
+  <img src="https://cdn.pixabay.com/photo/2018/01/11/21/27/desk-3076954_1280.jpg" class="img-fluid" alt="Image description">
+  <div style="margin-top: 20px;">
+
+  </div>
+  <h4 class="mb-1" style="color: #000; text-align: center; ">Join the 320000+ users who use Medium_clone to write awesome stories</h4>
+    <div class="rating" style="text-align: center; font-size: 20px;">
+      
+      
+      <span class="fa fa-star text-warning"></span>
+      <span class="fa fa-star text-warning"></span>
+      <span class="fa fa-star text-warning"></span>
+      <span class="fa fa-star text-warning"></span>
+       <span class="fa fa-star-half-alt text-warning"> 4.5+</span>
+      
+</div>
+    </div>
+  </div>
+</div>
+
+
+
+
+{% endblock %}

@@ -1,0 +1,183 @@
+{% extends 'pages/base.html' %}
+
+{% block title %}Medium_clone{% endblock %}
+
+{% block content %}
+<style>
+h2 {
+  font-size: 7.5rem; /* 100px */
+}
+
+
+  .post-title {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #000;
+    text-decoration: none;
+    text-transform: capitalize;
+  }
+
+  .post-title:hover {
+    text-decoration: underline;
+  }
+
+  .post-meta {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 10px;
+  }
+
+  
+
+  .read-more {
+    font-size: 14px;
+    color: #003cff;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .read-more:hover {
+    text-decoration: underline;
+  }
+  
+
+
+
+
+ 
+  @media (max-width: 767px) { /* Example breakpoint, adjust as needed */
+  h2 {
+    font-size: 3.5rem; /* 35px */
+  }
+}
+</style>
+
+
+
+  {% if user.is_authenticated %}
+
+  <div class="container-fluid " >
+    <div class="row" >
+      <div class="col-md-8" >
+        <!-- Content for the first column (2/3 width on medium and larger screens) -->
+         <h3>Popular Articles</h3>
+         <hr>
+        
+        {% if posts %}
+        {% for post in posts %}
+        
+          {% if post.featured_image %}
+  <img src="{{ post.featured_image.url }}" class="img-fluid rounded mb-4" style="max-height: 400px; width: 100%; object-fit: cover;">
+{% endif %}
+          <a href="{% url 'post_detail' username=post.author.username slug=post.slug %}" class="post-title" class="card-title">{{ post.title }}</a>
+          <div class="post-meta">
+            By {{ post.author }} | {{ post.created|date:"M d, Y" }}
+          </div>
+          <script type="application/json" id="content-{{ post.id }}">
+          {{ post.content|safe }}
+          </script>
+
+      <!-- ✅ Render HTML here -->
+      <div class="edjs-preview  mb-3" data-id="{{ post.id }}" ></div>
+          
+
+      <a href="{% url 'post_detail' username=post.author.username slug=post.slug %}" class="btn btn-sm btn-outline-primary mt-2" >Read More</a>
+      <hr>
+
+    <br> <br>
+    {% endfor %}
+        
+        {% else %}
+        <p class="no-posts">No posts available yet.</p>
+        {% endif %}
+
+        </div>
+        
+        <script src="https://cdn.jsdelivr.net/npm/editorjs-html-revised@3.3.0/build/edjsHTML.min.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const edjsParser = edjsHTML();
+
+    document.querySelectorAll(".edjs-preview").forEach(el => {
+      const id = el.dataset.id;
+      const rawJson = document.getElementById("content-" + id).textContent.trim();
+      const json = JSON.parse(rawJson);
+
+      const htmlBlocks = edjsParser.parse(json);
+
+      let charLimit = 65;
+      let charCount = 0;
+      let result = " ";
+
+      for (let html of htmlBlocks) {
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = html;
+        const text = tempDiv.innerText.trim();
+        const remaining = charLimit - charCount;
+
+        if (remaining <= 0) break;
+
+        if (text.length > remaining) {
+          result += text.slice(0, remaining) + "...";
+          break;
+        } else {
+          result += text + " ";
+          charCount += text.length + 1; // +1 for space
+        }
+      }
+
+      el.innerText = result.trim(); // Use innerHTML if you want formatting
+    });
+  });
+</script>
+
+
+
+
+
+
+      
+      <div class="col-md-4">
+        <!-- Content for the second column (1/3 width on medium and larger screens) -->
+        
+        <h3>Authors</h3>
+        <br>
+        
+
+    {% for author in authors %}
+        <div class="author-card">
+            
+            
+            <h4><img src="{{ author.profile_image.url }}" alt="{{ author.username }}" width="50" height="50">  <a href="{% url 'author_profile' author.user.username %}" style="color: #000;">{{ author.user.username }}</a>   </h4>
+          
+        </div>
+    {% empty %}
+        <p>No authors found.</p>
+    {% endfor %}
+
+  
+             
+
+      </div>
+    </div>
+  </div>
+
+  {% else %}
+  <div class="container-fluid">
+    <h2>
+      Human
+      <br>stories & ideas
+    </h2>
+    <p>A place to read, write, and deepen your understanding</p>
+    <br>
+    <a href="{% url 'signup' %}" class="btn btn-dark">Get Started</a>
+
+  </div>
+  {% endif %}
+
+
+
+
+{% endblock %}

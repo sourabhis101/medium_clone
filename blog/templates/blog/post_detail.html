@@ -1,0 +1,140 @@
+{% extends "pages/base.html" %}
+
+{% block title %}@{{ post.author.username }} - {{ post.title }}{% endblock %}
+<style>
+.editorjs-content {
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+</style>
+
+{% block content %}
+  <div class="container mt-4">
+    <h1>{{ post.title }}</h1>
+    <p class="text-muted">By @{{ post.author.username }} | {{ post.created|date:"M d, Y" }}</p>
+    <hr>
+    {% if post.featured_image %}
+  <img src="{{ post.featured_image.url }}" class="img-fluid rounded mb-4" style="max-width: 400px; width: 100%;  ">
+{% endif %}
+  
+
+<div id="editorjs-content" ></div>
+<h4 class="mt-5">Comments ({{ comments.count }})</h4>
+
+{% if comments %}
+  <div class="list-group">
+    {% for comment in comments %}
+      <div class="list-group-item mb-2">
+        <strong>{{ comment.author.username }}</strong>
+        <small class="text-muted float-end">{{ comment.created|date:"M d, Y H:i" }}</small>
+        <p class="mb-0 mt-1">{{ comment.body }}</p>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <p class="text-muted">No comments yet.</p>
+{% endif %}
+
+{% if user.is_authenticated %}
+  <!-- ✅ Comment Button to Trigger Modal -->
+  <button type="button" class=" btn btn-sm btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#commentModal">
+    Add Comment
+  </button>
+{% else %}
+  <!-- ❌ Not logged in -->
+  <p class="mt-3">
+    <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-outline-primary">Log in to comment</a>
+  </p>
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/editorjs-html-revised@3.3.0/build/edjsHTML.min.js"></script>
+
+<script>
+  const customParsers = {
+    list: (block) => {
+      const style = block.data.style;
+      const items = block.data.items || [];
+
+      if (style === "checklist") {
+        return `
+          <ul class="checklist">
+            ${items.map(item => {
+              const checked = item.meta?.checked ? "☑️" : "⬜️";
+              return `<li>${checked} ${item.content}</li>`;
+            }).join("")}
+          </ul>
+        `;
+      }
+
+      if (style === "ordered") {
+        return `
+          <ol>
+            ${items.map(item => `<li>${item.content}</li>`).join("")}
+          </ol>
+        `;
+      }
+
+      // Fallback unordered
+      return `
+        <ul>
+          ${items.map(item => `<li>${item.content}</li>`).join("")}
+        </ul>
+      `;
+    }
+  };
+
+  const edjsParser = edjsHTML(customParsers);
+  const contentJSON = JSON.parse(`{{ post_json|escapejs }}`);
+  const htmlBlocks = edjsParser.parse(contentJSON);
+
+  const container = document.getElementById("editorjs-content");
+
+  htmlBlocks.forEach(blockHTML => {
+    const div = document.createElement("div");
+    div.innerHTML = blockHTML;
+    container.appendChild(div);
+  });
+</script>
+{% if user.is_authenticated %}
+<!-- ✅ Comment Modal -->
+<div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    
+    <form method="post" action="{% url 'add_comment' username=post.author.username slug=post.slug %}">
+
+      
+
+      {% csrf_token %}
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="commentModalLabel">Leave a Comment</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="mb-3">
+            <textarea name="body" class="form-control" rows="4" placeholder="Write your comment..." required></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Post Comment</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endif %}
+
+
+
+    {% if request.user == post.author %}
+      <a href="{% url 'edit_post' slug=post.slug %}" class="btn btn-sm btn-outline-primary mt-2">Edit Post</a>
+    {% endif %}
+    
+
+
+
+  </div>
+{% endblock %}

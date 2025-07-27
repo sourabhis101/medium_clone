@@ -1,0 +1,86 @@
+{% extends "pages/base.html" %}
+
+{% block title %}@{{ author.username }} | Profile{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+
+  <div class="d-flex  mb-4">
+    <img src="{{ profile.profile_image.url }}" alt="Profile Image" class="rounded-circle me-3" width="40" height="40">
+    <div>
+      <h3 class="mb-0"> @{{ author.username }}  {% if request.user == author %}
+  <a href="{% url 'edit_profile' %}" class="btn btn-outline-primary btn-sm">Edit Profile</a>
+{% endif %}
+      </h3>
+      <p class="text-muted mb-1">{{ profile.bio }}</p>
+      <p>{{ post_count }} post{{ post_count|pluralize }}<p>
+     
+    </div>
+  </div>
+
+  <hr>
+
+  <h5>Posts by @{{ author.username }}</h5>
+  {% if posts %}
+    {% for post in posts %}
+      <div class="mb-3">
+        <h5>
+          <a href="{% url 'post_detail' username=author.username slug=post.slug %}">
+            {{ post.title }}
+          </a>
+        </h5>
+        <p class="text-muted">{{ post.created|date:"M d, Y" }}</p>
+          <script type="application/json" id="content-{{ post.id }}">
+          {{ post.content|safe }}
+        </script>
+
+        <!-- Where parsed HTML goes -->
+        <div class="edjs-preview" data-id="{{ post.id }}"></div>
+
+        <a href="{% url 'post_detail' username=post.author.username slug=post.slug %}" class="btn btn-sm btn-outline-primary mt-2">Read More</a>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p>No posts yet.</p>
+  {% endif %}
+  
+<script src="https://cdn.jsdelivr.net/npm/editorjs-html-revised@3.3.0/build/edjsHTML.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const edjsParser = edjsHTML();
+
+    document.querySelectorAll(".edjs-preview").forEach(el => {
+      const id = el.dataset.id;
+      const rawJson = document.getElementById("content-" + id).textContent.trim();
+      const json = JSON.parse(rawJson);
+
+      const htmlBlocks = edjsParser.parse(json);
+
+      let charLimit = 65;
+      let charCount = 0;
+      let result = " ";
+
+      for (let html of htmlBlocks) {
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = html;
+        const text = tempDiv.innerText.trim();
+        const remaining = charLimit - charCount;
+
+        if (remaining <= 0) break;
+
+        if (text.length > remaining) {
+          result += text.slice(0, remaining) + "...";
+          break;
+        } else {
+          result += text + " ";
+          charCount += text.length + 1; // +1 for space
+        }
+      }
+
+      el.innerText = result.trim(); // Use innerHTML if you want formatting
+    });
+  });
+</script>
+
+</div>
+{% endblock %}
