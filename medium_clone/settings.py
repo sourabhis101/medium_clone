@@ -149,9 +149,7 @@ LOGOUT_REDIRECT_URL = '/'
 SESSION_COOKIE_SECURE = True      # Only transmit session cookie over HTTPS
 CSRF_COOKIE_SECURE = True         # Only transmit CSRF cookie over HTTPS
 SESSION_COOKIE_HTTPONLY = True  
-CSRF_COOKIE_HTTPONLY = True
-CSRF_COOKIE_SAMESITE = 'Lax'  # Or 'Strict' if no cross-site use needed
-X_FRAME_OPTIONS = 'DENY' 
+
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_HSTS_SECONDS = 31536000  # 1 year
