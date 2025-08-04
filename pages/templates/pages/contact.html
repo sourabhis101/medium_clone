@@ -1,5 +1,5 @@
 <!-- contact -->
- {% extends 'pages/base.html' %}
+{% extends 'pages/base.html' %}
 
 {% block title %}Contact Us{% endblock %}
 
@@ -12,10 +12,11 @@
     padding: 40px;
     background-color: #fff;
     border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
   }
 
-  .contact-form, .contact-info {
+  .contact-form,
+  .contact-info {
     flex: 1 1 400px;
   }
 
@@ -53,7 +54,7 @@
     font-size: 16px;
     border-radius: 25px;
     cursor: pointer;
-    
+
   }
 
   .contact-form button:hover {
@@ -87,17 +88,23 @@
   <div class="contact-form">
     <h2>Send Us a Message</h2>
     <form method="post" action="/contact/">
-    {% csrf_token %}
-      <div class="form-floating"><input name="name" class="form-control" id="name"  placeholder="Name" required>
-    <label for="name">Name</label></div>
-      <div class="form-floating"><input name="email" class="form-control" id="email"  placeholder="Email address" required>
-    <label for="email">Email address</label></div>
-      <div class="form-floating"><input name="phone" class="form-control" id="phone"  placeholder="Phone number" required>
-    <label for="phone">Phone number</label></div>
-     
-      <div class="form-floating"><input name="subject" class="form-control" id="subject"  placeholder="Subject" required>
-    <label for="subject">Subject</label></div>
-     
+      {% csrf_token %}
+      <div class="form-floating"><input name="name" class="form-control" id="name" placeholder="Name" required>
+        <label for="name">Name</label>
+      </div>
+      <div class="form-floating"><input name="email" class="form-control" id="email" placeholder="Email address"
+          required>
+        <label for="email">Email address</label>
+      </div>
+      <div class="form-floating"><input name="phone" class="form-control" id="phone" placeholder="Phone number"
+          required>
+        <label for="phone">Phone number</label>
+      </div>
+
+      <div class="form-floating"><input name="subject" class="form-control" id="subject" placeholder="Subject" required>
+        <label for="subject">Subject</label>
+      </div>
+
       <textarea name="message" placeholder="Tell me your Message" required></textarea>
       <button type="submit">Send Message</button>
     </form>
@@ -109,6 +116,10 @@
     <p><i class="fas fa-envelope icon"></i> contact@mediumclone.com</p>
     <p><i class="fas fa-phone icon"></i> +91-98765-43210</p>
     <p><i class="fas fa-map-marker-alt icon"></i> New Delhi, India</p>
+    <iframe
+      src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d224345.89796785527!2d77.04417053579648!3d28.527554410196217!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sin!4v1754287369356!5m2!1sen!2sin"
+      width="450" height="450"  style="display: block; margin: 0 auto; border:0;"  allowfullscreen="" loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"></iframe>
 
     <div class="social-icons" style="margin-top: 20px;">
       <a href="#"><i class="fab fa-facebook-f"></i></a>
