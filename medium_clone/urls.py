@@ -33,6 +33,7 @@ urlpatterns = [
    
     path('accounts/', include('accounts.urls')),
     path('', include('blog.urls')),
-     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('followers/', include('followers.urls')),
    
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]

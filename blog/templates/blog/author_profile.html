@@ -3,84 +3,149 @@
 {% block title %}@{{ author.username }} | Profile{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
 
-  <div class="d-flex  mb-4">
-    <img src="{{ profile.profile_image.url }}" alt="Profile Image" class="rounded-circle me-3" width="40" height="40">
-    <div>
-      <h3 class="mb-0"> @{{ author.username }}  {% if request.user == author %}
-  <a href="{% url 'edit_profile' %}" class="btn btn-outline-primary btn-sm">Edit Profile</a>
-{% endif %}
-      </h3>
-      <p class="text-muted mb-1">{{ profile.bio }}</p>
-      <p>{{ post_count }} post{{ post_count|pluralize }}<p>
-     
-    </div>
-  </div>
+<div class="container-fluid ">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="container ">
 
-  <hr>
+        <div class="d-flex  mb-4">
+          <img src="{{ profile.profile_image.url }}" alt="Profile Image" class="rounded-circle me-3" width="40px"
+            height="40px">
+          <div>
+            <h3 class="mb-0"> @{{ author.username }} {% if request.user == author %}
+              <a href="{% url 'edit_profile' %}" class="btn btn-outline-primary btn-sm">Edit Profile</a>
+              <a href="{% url 'create_post' %}" class="btn btn-success btn-sm ">New Post</a>
 
-  <h5>Posts by @{{ author.username }}</h5>
-  {% if posts %}
-    {% for post in posts %}
-      <div class="mb-3">
-        <h5>
-          <a href="{% url 'post_detail' username=author.username slug=post.slug %}">
-            {{ post.title }}
-          </a>
-        </h5>
-        <p class="text-muted">{{ post.created|date:"M d, Y" }}</p>
+              {% endif %}
+
+              {% if request.user.is_authenticated and request.user != author %}
+              {% if is_following %}
+              <a href="{% url 'unfollow_user' author.username %}" class="btn btn-danger btn-sm  ">Unfollow</a>
+              {% else %}
+              <a href="{% url 'follow_user' author.username %}" class="btn btn-primary btn-sm ">Follow</a>
+              {% endif %}
+              {% endif %}
+            </h3>
+
+            <div>
+
+
+              <p>
+                <br>
+                <button type="button" class="btn btn-primary btn-sm">
+                  followers <span class="badge badge-light"> {{ followers.count }} </span>
+                </button> <button type="button" class="btn btn-dark btn-sm">
+                  following <span class="badge badge-light"> {{ following.count }}</span>
+                </button> <button type="button" class="btn btn-secondary btn-sm">
+                  post{{ post_count|pluralize }} <span class="badge badge-light">{{ post_count }}</span>
+
+                </button>
+              </p>
+
+
+            </div>
+            <p class="text-muted mb-1">{{ profile.bio }}</p>
+
+
+          </div>
+        </div>
+
+
+
+        <hr>
+
+        <h5>Posts by @{{ author.username }}</h5>
+        {% if posts %}
+        {% for post in posts %}
+        <div class="mb-3">
+          <h5>
+            <a href="{% url 'post_detail' username=author.username slug=post.slug %}">
+              {{ post.title }}
+            </a>
+          </h5>
+          <p class="text-muted">{{ post.created|date:"M d, Y" }}</p>
           <script type="application/json" id="content-{{ post.id }}">
           {{ post.content|safe }}
         </script>
 
-        <!-- Where parsed HTML goes -->
-        <div class="edjs-preview" data-id="{{ post.id }}"></div>
+          <!-- Where parsed HTML goes -->
+          <div class="edjs-preview" data-id="{{ post.id }}"></div>
 
-        <a href="{% url 'post_detail' username=post.author.username slug=post.slug %}" class="btn btn-sm btn-outline-primary mt-2">Read More</a>
+          <a href="{% url 'post_detail' username=post.author.username slug=post.slug %}"
+            class="btn btn-sm btn-outline-primary mt-2">Read More</a>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p>No posts yet.</p>
+        {% endif %}
+
+        <script src="https://cdn.jsdelivr.net/npm/editorjs-html-revised@3.3.0/build/edjsHTML.min.js"></script>
+        <script>
+          document.addEventListener("DOMContentLoaded", function () {
+            const edjsParser = edjsHTML();
+
+            document.querySelectorAll(".edjs-preview").forEach(el => {
+              const id = el.dataset.id;
+              const rawJson = document.getElementById("content-" + id).textContent.trim();
+              const json = JSON.parse(rawJson);
+
+              const htmlBlocks = edjsParser.parse(json);
+
+              let charLimit = 65;
+              let charCount = 0;
+              let result = " ";
+
+              for (let html of htmlBlocks) {
+                const tempDiv = document.createElement("div");
+                tempDiv.innerHTML = html;
+                const text = tempDiv.innerText.trim();
+                const remaining = charLimit - charCount;
+
+                if (remaining <= 0) break;
+
+                if (text.length > remaining) {
+                  result += text.slice(0, remaining) + "...";
+                  break;
+                } else {
+                  result += text + " ";
+                  charCount += text.length + 1; // +1 for space
+                }
+              }
+
+              el.innerText = result.trim(); // Use innerHTML if you want formatting
+            });
+          });
+        </script>
+
       </div>
-    {% endfor %}
-  {% else %}
-    <p>No posts yet.</p>
-  {% endif %}
-  
-<script src="https://cdn.jsdelivr.net/npm/editorjs-html-revised@3.3.0/build/edjsHTML.min.js"></script>
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const edjsParser = edjsHTML();
+    </div>
+    <div class="col-md-4">
+      <!-- Content for the second column (1/3 width on medium and larger screens) -->
 
-    document.querySelectorAll(".edjs-preview").forEach(el => {
-      const id = el.dataset.id;
-      const rawJson = document.getElementById("content-" + id).textContent.trim();
-      const json = JSON.parse(rawJson);
+      <h3>Authors</h3>
+      <br>
 
-      const htmlBlocks = edjsParser.parse(json);
 
-      let charLimit = 65;
-      let charCount = 0;
-      let result = " ";
+      {% for author in authors %}
+      <div class="author-card">
 
-      for (let html of htmlBlocks) {
-        const tempDiv = document.createElement("div");
-        tempDiv.innerHTML = html;
-        const text = tempDiv.innerText.trim();
-        const remaining = charLimit - charCount;
 
-        if (remaining <= 0) break;
+        <h4><img src="{{ author.profile_image.url }}" alt="{{ author.username }}" width="50" height="50"> <a
+            href="{% url 'author_profile' author.user.username %}" style="color: #000;">{{ author.user.username }}</a>
+        </h4>
 
-        if (text.length > remaining) {
-          result += text.slice(0, remaining) + "...";
-          break;
-        } else {
-          result += text + " ";
-          charCount += text.length + 1; // +1 for space
-        }
-      }
+      </div>
+      {% empty %}
+      <p>No authors found.</p>
+      {% endfor %}
 
-      el.innerText = result.trim(); // Use innerHTML if you want formatting
-    });
-  });
-</script>
+
+
+
+    </div>
+  </div>
 
 </div>
+
 {% endblock %}
