@@ -36,4 +36,4 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('followers/', include('followers.urls')),
    
-]
+]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
